@@ -1,0 +1,160 @@
+﻿@page
+@model FirstRazorProject.Pages.CalcModel
+@{
+    ViewData["Title"] = "Calculator";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Calculator</h1>
+</div>
+<script>
+    /* text entry stuff */
+    var entry = "";
+    var sgn = "";
+    function showEntry() {
+        var e = document.getElementById('entry');
+        e.innerHTML = sgn + entry + "_";
+    }
+
+    /* stack stuff */
+    var s = { X: 0, Y: 0, Z: 0, T: 0 };
+    function showStack() {
+        var S = document.getElementById('stack');
+        S.innerHTML = "";
+        for (v in s) {
+            S.innerHTML = v + ": " + s[v] + "<br/>" + S.innerHTML;
+        }
+        // S.innerHTML = "t: "+s.T+"<br/>z: "+s.Z+"<br/>y: "+s.Y+"<br/>x: "+s.X;
+    }
+
+    function push(newX) {
+        s.T = s.Z; s.Z = s.Y; s.Y = s.X; s.X = newX;
+        showStack();
+    }
+    function concat(n) {
+        entry = entry + n;
+        showEntry();
+    }
+    function cle() {
+        entry = "";
+        showEntry();
+    }
+    function cls() {
+        s.X = s.Y = s.Z = s.T = 0;
+        showStack();
+    }
+    function enter() {
+        push(1 * (sgn + entry));
+        entry = "";
+        sgn = "";
+        showEntry();
+    }
+    function chs() {
+        if (sgn == "") {
+            sgn = "-";
+        }
+        else if (sgn == "-") {
+            sgn = "+";
+        }
+        else if (sgn == "+") {
+            sgn = "-";
+        }
+        showEntry();
+    }
+    function divOp() {
+        s.X = s.Y / s.X; s.Y = s.Z; s.Z = T;
+        showStack();
+    }
+    function mulOp() {
+        s.X = s.Y * s.X; s.Y = s.Z; s.Z = s.T;
+        showStack();
+    }
+    function subOp() {
+        s.X = s.Y - s.X; s.Y = s.Z; s.Z = s.T;
+        showStack();
+    }
+    function addOp() {
+        s.X = s.Y + s.X; s.Y = s.Z; s.Z = s.T;
+        showStack();
+    }
+    function kp() {
+        var val = event.key;
+        var debug = document.getElementById('debug');
+        debug.innerHTML = val;
+
+        if ('0' <= val && val <= '9') {
+            concat(val);
+        }
+        else if (val == '.') {
+            concat('.');
+        }
+        else if (val == 'Escape') {
+            cle();
+        }
+        else if (val == 'Backspace') {
+            cls();
+        }
+        else if (val == 'Enter') {
+            enter();
+        }
+        else if (val == '/') {
+            divOp();
+        }
+        else if (val == '*') {
+            mulOp();
+        }
+        else if (val == '-') {
+            subOp();
+        }
+        else if (val == '+') {
+            addOp();
+        }
+    }
+    window.addEventListener('keydown', kp);
+</script>
+  
+    <h1>Calculator</h1>
+    <table class="Calc">
+        <tr>
+            <td colspan="4" id="stack" class="display">
+            </td>
+            <script>
+                showStack();
+            </script>
+        </tr>
+        <tr>
+            <td id="entry" colspan="4" class="entry">
+                _
+            </td>
+        </tr>
+        <tr>
+            <td class="but" onclick="enter()" colspan="2">enter</td>
+            <td class="but" onclick="cle()">ce</td>
+            <td class="but" onclick="cls()">cs</td>
+        </tr>
+        <tr>
+            <td width="40" class="but-br" onclick="concat('7')">7</td>
+            <td width="40" class="but-br" onclick="concat('8')">8</td>
+            <td width="40" class="but-br" onclick="concat('9')">9</td>
+            <td width="40" class="but" onclick="divOp()">/</td>
+        </tr>
+        <tr>
+            <td class="but-br" onclick="concat('4')">4</td>
+            <td class="but-br" onclick="concat('5')">5</td>
+            <td class="but-br" onclick="concat('6')">6</td>
+            <td class="but" onclick="mulOp()">*</td>
+        </tr>
+        <tr>
+            <td class="but-br" onclick="concat('1')">1</td>
+            <td class="but-br" onclick="concat('2')">2</td>
+            <td class="but-br" onclick="concat('3')">3</td>
+            <td class="but" onclick="subOp()">-</td>
+        </tr>
+        <tr>
+            <td class="but" onclick="chs()">±</td>
+            <td class="but-br" onclick="concat('0')">0</td>
+            <td class="but" onclick="concat('.')">.</td>
+            <td class="but" onclick="addOp()">+</td>
+        </tr>
+    </table>
+    <p id="debug">ingen fara</p>
